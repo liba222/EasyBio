@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { Routes, Route, Link } from 'react-router-dom';
 import { Calendar, CheckCircle, TrendingUp, Users, Mail, Linkedin } from 'lucide-react';
 import WhoAmI from './WhoAmI.jsx';
+import LinkedInPostGenerator from './LinkedInPostGenerator.jsx';
 
 export default function App() {
   return (
     <Routes>
       <Route path="/" element={<GhostwritingLanding />} />
       <Route path="/who-am-i" element={<WhoAmI />} />
+      <Route path="/post-generator" element={<LinkedInPostGenerator />} />
     </Routes>
   );
 }
@@ -62,6 +64,9 @@ function GhostwritingLanding() {
             <div className="flex items-center gap-4">
               <Link to="/who-am-i" className="text-blue-600 hover:text-blue-700 font-medium transition">
                 Who Am I
+              </Link>
+              <Link to="/post-generator" className="text-blue-600 hover:text-blue-700 font-medium transition">
+                AI Post Generator
               </Link>
               <button onClick={() => document.getElementById('contact').scrollIntoView({behavior: 'smooth'})} className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
                 Get Started
