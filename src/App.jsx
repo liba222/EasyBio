@@ -1,7 +1,18 @@
 import React, { useState } from 'react';
+import { Routes, Route, Link } from 'react-router-dom';
 import { Calendar, CheckCircle, TrendingUp, Users, Mail, Linkedin } from 'lucide-react';
+import WhoAmI from './WhoAmI.jsx';
 
-export default function GhostwritingLanding() {
+export default function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<GhostwritingLanding />} />
+      <Route path="/who-am-i" element={<WhoAmI />} />
+    </Routes>
+  );
+}
+
+function GhostwritingLanding() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -48,9 +59,14 @@ export default function GhostwritingLanding() {
         <div className="max-w-6xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <h1 className="text-2xl font-bold text-blue-900">BioVoice</h1>
-            <button onClick={() => document.getElementById('contact').scrollIntoView({behavior: 'smooth'})} className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
-              Get Started
-            </button>
+            <div className="flex items-center gap-4">
+              <Link to="/who-am-i" className="text-blue-600 hover:text-blue-700 font-medium transition">
+                Who Am I
+              </Link>
+              <button onClick={() => document.getElementById('contact').scrollIntoView({behavior: 'smooth'})} className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
+                Get Started
+              </button>
+            </div>
           </div>
         </div>
       </nav>
