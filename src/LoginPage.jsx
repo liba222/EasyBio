@@ -1,9 +1,13 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import { login, signup, requestPasswordRecovery, AuthError } from '@netlify/identity';
-import { Loader2, Lock, Mail, Eye, EyeOff } from 'lucide-react';
+import { Loader2, Lock, Mail, Eye, EyeOff, CreditCard } from 'lucide-react';
 
 export default function LoginPage({ onLoginSuccess }) {
+  const [searchParams] = useSearchParams();
+  const sessionId = searchParams.get('session_id');
+  const tier = searchParams.get('tier');
+
   const [mode, setMode] = useState('login'); // 'login', 'signup', 'recovery'
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -12,6 +16,40 @@ export default function LoginPage({ onLoginSuccess }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
+  const [paymentVerified, setPaymentVerified] = useState(false);
+  const [verifyingPayment, setVerifyingPayment] = useState(false);
+
+  // Verify payment session if session_id is present
+  useEffect(() => {
+    if (!sessionId) return;
+
+    async function verifyPayment() {
+      setVerifyingPayment(true);
+      try {
+        const response = await fetch('/api/verify-payment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sessionId }),
+        });
+        const data = await response.json();
+        if (data.verified) {
+          setPaymentVerified(true);
+          setMode('signup');
+          if (data.customerEmail) {
+            setEmail(data.customerEmail);
+          }
+        } else {
+          setError('Payment could not be verified. Please try again or contact support.');
+        }
+      } catch {
+        setError('Failed to verify payment. Please try again.');
+      } finally {
+        setVerifyingPayment(false);
+      }
+    }
+
+    verifyPayment();
+  }, [sessionId]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -82,6 +120,17 @@ export default function LoginPage({ onLoginSuccess }) {
     }
   };
 
+  if (verifyingPayment) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="animate-spin text-blue-600 mx-auto mb-4" size={40} />
+          <p className="text-gray-600 text-lg">Verifying your payment...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Header */}
@@ -100,7 +149,11 @@ export default function LoginPage({ onLoginSuccess }) {
         <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md">
           <div className="text-center mb-6">
             <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Lock className="text-blue-600" size={28} />
+              {mode === 'signup' && paymentVerified ? (
+                <CreditCard className="text-blue-600" size={28} />
+              ) : (
+                <Lock className="text-blue-600" size={28} />
+              )}
             </div>
             <h2 className="text-2xl font-bold text-gray-900">
               {mode === 'login' && 'Sign In'}
@@ -109,9 +162,15 @@ export default function LoginPage({ onLoginSuccess }) {
             </h2>
             <p className="text-gray-600 mt-2">
               {mode === 'login' && 'Access the AI LinkedIn Post Generator'}
-              {mode === 'signup' && 'Get access to the AI LinkedIn Post Generator'}
+              {mode === 'signup' && paymentVerified && 'Payment confirmed! Create your account to get started.'}
+              {mode === 'signup' && !paymentVerified && 'Get access to the AI LinkedIn Post Generator'}
               {mode === 'recovery' && 'Enter your email to receive a reset link'}
             </p>
+            {mode === 'signup' && paymentVerified && tier && (
+              <span className="inline-block mt-2 bg-green-100 text-green-800 text-sm font-medium px-3 py-1 rounded-full">
+                {tier.charAt(0).toUpperCase() + tier.slice(1)} plan
+              </span>
+            )}
           </div>
 
           {error && (
@@ -180,19 +239,18 @@ export default function LoginPage({ onLoginSuccess }) {
                 </button>
                 <p className="text-gray-600 text-sm">
                   Don't have an account?{' '}
-                  <button
-                    type="button"
-                    onClick={() => { setMode('signup'); setError(''); setMessage(''); }}
+                  <Link
+                    to="/#packages"
                     className="text-blue-600 hover:text-blue-700 font-medium"
                   >
-                    Sign up
-                  </button>
+                    Choose a plan to sign up
+                  </Link>
                 </p>
               </div>
             </form>
           )}
 
-          {mode === 'signup' && (
+          {mode === 'signup' && paymentVerified && (
             <form onSubmit={handleSignup} className="space-y-4">
               <div>
                 <label className="block text-sm font-semibold mb-2">Full Name</label>
@@ -259,6 +317,31 @@ export default function LoginPage({ onLoginSuccess }) {
                 </button>
               </p>
             </form>
+          )}
+
+          {mode === 'signup' && !paymentVerified && (
+            <div className="text-center space-y-4">
+              <div className="bg-amber-50 border border-amber-200 text-amber-800 px-4 py-3 rounded-lg">
+                <p className="font-medium">Payment required to create an account</p>
+                <p className="text-sm mt-1">Please choose a plan and complete payment first.</p>
+              </div>
+              <Link
+                to="/#packages"
+                className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
+              >
+                View Plans & Pricing
+              </Link>
+              <p className="text-gray-600 text-sm">
+                Already have an account?{' '}
+                <button
+                  type="button"
+                  onClick={() => { setMode('login'); setError(''); setMessage(''); }}
+                  className="text-blue-600 hover:text-blue-700 font-medium"
+                >
+                  Sign in
+                </button>
+              </p>
+            </div>
           )}
 
           {mode === 'recovery' && (
