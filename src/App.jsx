@@ -12,13 +12,29 @@ export default function GhostwritingLanding() {
   });
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     if (!formData.name || !formData.email) {
       alert('Please fill in your name and email');
       return;
     }
-    setSubmitted(true);
-    console.log('Form submitted:', formData);
+    try {
+      const response = await fetch('/__forms.html', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          'form-name': 'contact',
+          ...formData
+        }).toString(),
+      });
+      if (response.ok) {
+        setSubmitted(true);
+      } else {
+        alert('Something went wrong. Please try again.');
+      }
+    } catch (error) {
+      alert('Something went wrong. Please try again.');
+    }
   };
 
   const handleChange = (field, value) => {
@@ -279,11 +295,16 @@ export default function GhostwritingLanding() {
           <p className="text-center text-gray-600 mb-8">Schedule a free 30-minute discovery call to discuss how I can help you.</p>
           
           {!submitted ? (
-            <div className="space-y-4">
+            <form name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" onSubmit={handleSubmit} className="space-y-4">
+              <input type="hidden" name="form-name" value="contact" />
+              <p style={{ display: 'none' }}>
+                <label>Don't fill this out: <input name="bot-field" /></label>
+              </p>
               <div>
                 <label className="block text-sm font-semibold mb-2">Name *</label>
                 <input
                   type="text"
+                  name="name"
                   value={formData.name}
                   onChange={(e) => handleChange('name', e.target.value)}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -294,6 +315,7 @@ export default function GhostwritingLanding() {
                 <label className="block text-sm font-semibold mb-2">Email *</label>
                 <input
                   type="email"
+                  name="email"
                   value={formData.email}
                   onChange={(e) => handleChange('email', e.target.value)}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -304,6 +326,7 @@ export default function GhostwritingLanding() {
                 <label className="block text-sm font-semibold mb-2">Company</label>
                 <input
                   type="text"
+                  name="company"
                   value={formData.company}
                   onChange={(e) => handleChange('company', e.target.value)}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -314,6 +337,7 @@ export default function GhostwritingLanding() {
                 <label className="block text-sm font-semibold mb-2">LinkedIn Profile URL</label>
                 <input
                   type="url"
+                  name="linkedin"
                   value={formData.linkedin}
                   onChange={(e) => handleChange('linkedin', e.target.value)}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -323,6 +347,7 @@ export default function GhostwritingLanding() {
               <div>
                 <label className="block text-sm font-semibold mb-2">Package Interest</label>
                 <select
+                  name="tier"
                   value={formData.tier}
                   onChange={(e) => handleChange('tier', e.target.value)}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -337,6 +362,7 @@ export default function GhostwritingLanding() {
               <div>
                 <label className="block text-sm font-semibold mb-2">Tell me about your goals</label>
                 <textarea
+                  name="message"
                   value={formData.message}
                   onChange={(e) => handleChange('message', e.target.value)}
                   rows="4"
@@ -345,12 +371,12 @@ export default function GhostwritingLanding() {
                 />
               </div>
               <button
-                onClick={handleSubmit}
+                type="submit"
                 className="w-full bg-blue-600 text-white px-6 py-4 rounded-lg text-lg font-semibold hover:bg-blue-700 transition"
               >
                 Schedule Discovery Call
               </button>
-            </div>
+            </form>
           ) : (
             <div className="bg-green-50 border-2 border-green-500 rounded-lg p-8 text-center">
               <CheckCircle className="text-green-500 mx-auto mb-4" size={48} />
