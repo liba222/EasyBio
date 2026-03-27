@@ -19,13 +19,14 @@ export default async (req) => {
     });
   }
 
-  const message = await anthropic.messages.create({
-    model: 'claude-sonnet-4-5',
-    max_tokens: 1000,
-    messages: [
-      {
-        role: 'user',
-        content: `You are a LinkedIn ghostwriter specializing in biotech/pharma content. Generate 3 LinkedIn post variations based on this brief:
+  try {
+    const message = await anthropic.messages.create({
+      model: 'claude-sonnet-4-5',
+      max_tokens: 4096,
+      messages: [
+        {
+          role: 'user',
+          content: `You are a LinkedIn ghostwriter specializing in biotech/pharma content. Generate 3 LinkedIn post variations based on this brief:
 
 CLIENT PROFILE:
 - Name: ${clientInfo.name}
@@ -68,16 +69,25 @@ Return ONLY a JSON object with this structure (no markdown, no preamble):
     }
   ]
 }`,
-      },
-    ],
-  });
+        },
+      ],
+    });
 
-  const textContent = message.content.find((item) => item.type === 'text')?.text || '';
-  const cleanedText = textContent.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+    const textContent = message.content.find((item) => item.type === 'text')?.text || '';
+    const cleanedText = textContent.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
 
-  return new Response(cleanedText, {
-    headers: { 'Content-Type': 'application/json' },
-  });
+    // Validate the response is valid JSON before returning
+    JSON.parse(cleanedText);
+
+    return new Response(cleanedText, {
+      headers: { 'Content-Type': 'application/json' },
+    });
+  } catch (error) {
+    return new Response(JSON.stringify({ error: 'Failed to generate posts. Please try again.' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
 };
 
 export const config = {
