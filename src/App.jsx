@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, Link, Navigate } from 'react-router-dom';
-import { Calendar, CheckCircle, TrendingUp, Users, Mail, Linkedin } from 'lucide-react';
+import { Calendar, CheckCircle, TrendingUp, Linkedin } from 'lucide-react';
 import { getUser, logout, handleAuthCallback, updateUser } from '@netlify/identity';
 import WhoAmI from './WhoAmI.jsx';
 import LinkedInPostGenerator from './LinkedInPostGenerator.jsx';
@@ -135,43 +135,27 @@ export default function App() {
 }
 
 function GhostwritingLanding({ user, onLogout }) {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    company: '',
-    linkedin: '',
-    tier: '',
-    message: ''
-  });
-  const [submitted, setSubmitted] = useState(false);
+  const [checkoutLoading, setCheckoutLoading] = useState(null);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!formData.name || !formData.email) {
-      alert('Please fill in your name and email');
-      return;
-    }
+  const handleCheckout = async (tier) => {
+    setCheckoutLoading(tier);
     try {
-      const response = await fetch('/__forms.html', {
+      const response = await fetch('/api/create-checkout-session', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({
-          'form-name': 'contact',
-          ...formData
-        }).toString(),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tier }),
       });
-      if (response.ok) {
-        setSubmitted(true);
+      const data = await response.json();
+      if (data.url) {
+        window.location.href = data.url;
       } else {
-        alert('Something went wrong. Please try again.');
+        alert(data.error || 'Failed to start checkout. Please try again.');
       }
     } catch (error) {
       alert('Something went wrong. Please try again.');
+    } finally {
+      setCheckoutLoading(null);
     }
-  };
-
-  const handleChange = (field, value) => {
-    setFormData({...formData, [field]: value});
   };
 
   return (
@@ -193,7 +177,7 @@ function GhostwritingLanding({ user, onLogout }) {
                   Sign Out
                 </button>
               )}
-              <button onClick={() => document.getElementById('contact').scrollIntoView({behavior: 'smooth'})} className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
+              <button onClick={() => document.getElementById('packages').scrollIntoView({behavior: 'smooth'})} className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
                 Get Started
               </button>
             </div>
@@ -213,8 +197,8 @@ function GhostwritingLanding({ user, onLogout }) {
             Your expertise deserves a voice on LinkedIn. I help biotech and pharma executives build thought leadership without spending hours writing.
           </p>
           <div className="flex justify-center gap-4 flex-wrap">
-            <button onClick={() => document.getElementById('contact').scrollIntoView({behavior: 'smooth'})} className="bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-700 transition">
-              Schedule a Call
+            <button onClick={() => document.getElementById('packages').scrollIntoView({behavior: 'smooth'})} className="bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-700 transition">
+              View Packages
             </button>
             <button onClick={() => document.getElementById('packages').scrollIntoView({behavior: 'smooth'})} className="border-2 border-blue-600 text-blue-600 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-50 transition">
               View Packages
@@ -322,8 +306,8 @@ function GhostwritingLanding({ user, onLogout }) {
                   <span>Approval before posting</span>
                 </li>
               </ul>
-              <button onClick={() => document.getElementById('contact').scrollIntoView({behavior: 'smooth'})} className="w-full text-center bg-gray-100 text-gray-900 px-6 py-3 rounded-lg font-semibold hover:bg-gray-200 transition">
-                Get Started
+              <button onClick={() => handleCheckout('essential')} disabled={checkoutLoading === 'essential'} className="w-full text-center bg-gray-100 text-gray-900 px-6 py-3 rounded-lg font-semibold hover:bg-gray-200 transition disabled:opacity-50">
+                {checkoutLoading === 'essential' ? 'Redirecting...' : 'Get Started'}
               </button>
             </div>
 
@@ -355,8 +339,8 @@ function GhostwritingLanding({ user, onLogout }) {
                   <span>Monthly analytics report</span>
                 </li>
               </ul>
-              <button onClick={() => document.getElementById('contact').scrollIntoView({behavior: 'smooth'})} className="w-full text-center bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition">
-                Get Started
+              <button onClick={() => handleCheckout('professional')} disabled={checkoutLoading === 'professional'} className="w-full text-center bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition disabled:opacity-50">
+                {checkoutLoading === 'professional' ? 'Redirecting...' : 'Get Started'}
               </button>
             </div>
 
@@ -389,8 +373,8 @@ function GhostwritingLanding({ user, onLogout }) {
                   <span>Priority support</span>
                 </li>
               </ul>
-              <button onClick={() => document.getElementById('contact').scrollIntoView({behavior: 'smooth'})} className="w-full text-center bg-gray-100 text-gray-900 px-6 py-3 rounded-lg font-semibold hover:bg-gray-200 transition">
-                Get Started
+              <button onClick={() => handleCheckout('executive')} disabled={checkoutLoading === 'executive'} className="w-full text-center bg-gray-100 text-gray-900 px-6 py-3 rounded-lg font-semibold hover:bg-gray-200 transition disabled:opacity-50">
+                {checkoutLoading === 'executive' ? 'Redirecting...' : 'Get Started'}
               </button>
             </div>
           </div>
@@ -431,105 +415,6 @@ function GhostwritingLanding({ user, onLogout }) {
               </div>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* Contact Form */}
-      <section id="contact" className="py-16 bg-white">
-        <div className="max-w-2xl mx-auto px-4">
-          <h3 className="text-3xl font-bold text-center mb-4">Ready to Build Your LinkedIn Presence?</h3>
-          <p className="text-center text-gray-600 mb-8">Schedule a free 30-minute discovery call to discuss how I can help you.</p>
-
-          {!submitted ? (
-            <form name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" onSubmit={handleSubmit} className="space-y-4">
-              <input type="hidden" name="form-name" value="contact" />
-              <p style={{ display: 'none' }}>
-                <label>Don't fill this out: <input name="bot-field" /></label>
-              </p>
-              <div>
-                <label className="block text-sm font-semibold mb-2">Name *</label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={(e) => handleChange('name', e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Your full name"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold mb-2">Email *</label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={(e) => handleChange('email', e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="your.email@company.com"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold mb-2">Company</label>
-                <input
-                  type="text"
-                  name="company"
-                  value={formData.company}
-                  onChange={(e) => handleChange('company', e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Your company name"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold mb-2">LinkedIn Profile URL</label>
-                <input
-                  type="url"
-                  name="linkedin"
-                  value={formData.linkedin}
-                  onChange={(e) => handleChange('linkedin', e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="https://linkedin.com/in/yourprofile"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold mb-2">Package Interest</label>
-                <select
-                  name="tier"
-                  value={formData.tier}
-                  onChange={(e) => handleChange('tier', e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="">Select a package</option>
-                  <option value="essential">Essential - €650/month</option>
-                  <option value="professional">Professional - €1,100/month</option>
-                  <option value="executive">Executive - €1,650/month</option>
-                  <option value="custom">Custom solution</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-semibold mb-2">Tell me about your goals</label>
-                <textarea
-                  name="message"
-                  value={formData.message}
-                  onChange={(e) => handleChange('message', e.target.value)}
-                  rows="4"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="What do you want to achieve with your LinkedIn presence?"
-                />
-              </div>
-              <button
-                type="submit"
-                className="w-full bg-blue-600 text-white px-6 py-4 rounded-lg text-lg font-semibold hover:bg-blue-700 transition"
-              >
-                Schedule Discovery Call
-              </button>
-            </form>
-          ) : (
-            <div className="bg-green-50 border-2 border-green-500 rounded-lg p-8 text-center">
-              <CheckCircle className="text-green-500 mx-auto mb-4" size={48} />
-              <h4 className="text-2xl font-bold text-green-900 mb-2">Thank You!</h4>
-              <p className="text-green-800">I'll reach out within 24 hours to schedule our discovery call.</p>
-            </div>
-          )}
         </div>
       </section>
 
