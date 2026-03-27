@@ -1,20 +1,140 @@
-import React, { useState } from 'react';
-import { Routes, Route, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Routes, Route, Link, Navigate } from 'react-router-dom';
 import { Calendar, CheckCircle, TrendingUp, Users, Mail, Linkedin } from 'lucide-react';
+import { getUser, logout, handleAuthCallback, updateUser } from '@netlify/identity';
 import WhoAmI from './WhoAmI.jsx';
 import LinkedInPostGenerator from './LinkedInPostGenerator.jsx';
+import LoginPage from './LoginPage.jsx';
 
 export default function App() {
+  const [user, setUser] = useState(null);
+  const [authChecked, setAuthChecked] = useState(false);
+  const [recoveryUser, setRecoveryUser] = useState(null);
+  const [newPassword, setNewPassword] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [passwordSuccess, setPasswordSuccess] = useState(false);
+
+  useEffect(() => {
+    async function init() {
+      try {
+        // Process auth callbacks (OAuth, confirmation, recovery, invite)
+        const result = await handleAuthCallback();
+        if (result) {
+          switch (result.type) {
+            case 'confirmation':
+            case 'oauth':
+              if (result.user) setUser(result.user);
+              break;
+            case 'recovery':
+              if (result.user) {
+                setUser(result.user);
+                setRecoveryUser(result.user);
+              }
+              break;
+          }
+        }
+      } catch (e) {
+        // Callback processing failed, continue
+      }
+
+      // Check if already logged in
+      try {
+        const currentUser = await getUser();
+        if (currentUser) setUser(currentUser);
+      } catch (e) {
+        // Not logged in
+      }
+
+      setAuthChecked(true);
+    }
+    init();
+  }, []);
+
+  const handleLoginSuccess = (loggedInUser) => {
+    setUser(loggedInUser);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (e) {
+      // Ignore logout errors
+    }
+    setUser(null);
+  };
+
+  const handlePasswordReset = async (e) => {
+    e.preventDefault();
+    setPasswordError('');
+    if (newPassword.length < 6) {
+      setPasswordError('Password must be at least 6 characters.');
+      return;
+    }
+    try {
+      await updateUser({ password: newPassword });
+      setPasswordSuccess(true);
+      setRecoveryUser(null);
+      setNewPassword('');
+    } catch (err) {
+      setPasswordError(err.message || 'Failed to update password.');
+    }
+  };
+
+  // Show password reset form if user arrived via recovery link
+  if (recoveryUser) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center px-4">
+        <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md text-center">
+          <h2 className="text-2xl font-bold mb-4">Set New Password</h2>
+          <p className="text-gray-600 mb-6">Enter your new password below.</p>
+          {passwordError && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">{passwordError}</div>
+          )}
+          <form onSubmit={handlePasswordReset} className="space-y-4">
+            <input
+              type="password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              required
+              minLength={6}
+              placeholder="New password (min. 6 characters)"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <button
+              type="submit"
+              className="w-full bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
+            >
+              Update Password
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <Routes>
-      <Route path="/" element={<GhostwritingLanding />} />
+      <Route path="/" element={<GhostwritingLanding user={user} onLogout={handleLogout} />} />
       <Route path="/who-am-i" element={<WhoAmI />} />
-      <Route path="/post-generator" element={<LinkedInPostGenerator />} />
+      <Route
+        path="/post-generator"
+        element={
+          !authChecked ? (
+            <div className="min-h-screen flex items-center justify-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            </div>
+          ) : user ? (
+            <LinkedInPostGenerator user={user} onLogout={handleLogout} />
+          ) : (
+            <LoginPage onLoginSuccess={handleLoginSuccess} />
+          )
+        }
+      />
     </Routes>
   );
 }
 
-function GhostwritingLanding() {
+function GhostwritingLanding({ user, onLogout }) {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -68,6 +188,11 @@ function GhostwritingLanding() {
               <Link to="/post-generator" className="text-blue-600 hover:text-blue-700 font-medium transition">
                 AI Post Generator
               </Link>
+              {user && (
+                <button onClick={onLogout} className="text-gray-500 hover:text-gray-700 text-sm font-medium transition">
+                  Sign Out
+                </button>
+              )}
               <button onClick={() => document.getElementById('contact').scrollIntoView({behavior: 'smooth'})} className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
                 Get Started
               </button>
@@ -314,7 +439,7 @@ function GhostwritingLanding() {
         <div className="max-w-2xl mx-auto px-4">
           <h3 className="text-3xl font-bold text-center mb-4">Ready to Build Your LinkedIn Presence?</h3>
           <p className="text-center text-gray-600 mb-8">Schedule a free 30-minute discovery call to discuss how I can help you.</p>
-          
+
           {!submitted ? (
             <form name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" onSubmit={handleSubmit} className="space-y-4">
               <input type="hidden" name="form-name" value="contact" />

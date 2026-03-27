@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Loader2, CheckCircle, Sparkles, Copy, RefreshCw } from 'lucide-react';
 
-export default function LinkedInPostGenerator() {
+export default function LinkedInPostGenerator({ user, onLogout }) {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [generatedPosts, setGeneratedPosts] = useState([]);
@@ -94,9 +94,19 @@ export default function LinkedInPostGenerator() {
           <div className="flex items-center justify-between">
             <Link to="/" className="text-2xl font-bold text-blue-900">BioVoice</Link>
             <div className="flex items-center gap-4">
+              {user && (
+                <span className="text-gray-500 text-sm">
+                  {user.email}
+                </span>
+              )}
               <Link to="/" className="text-blue-600 hover:text-blue-700 font-medium transition">
                 Back to Home
               </Link>
+              {onLogout && (
+                <button onClick={onLogout} className="text-gray-500 hover:text-gray-700 text-sm font-medium transition">
+                  Sign Out
+                </button>
+              )}
             </div>
           </div>
         </div>
