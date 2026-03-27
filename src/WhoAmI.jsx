@@ -40,12 +40,10 @@ export default function WhoAmI() {
           <div>
             <h1 className="text-4xl font-bold text-gray-900 mb-4">Who Am I</h1>
             <p className="text-xl text-blue-600 font-medium mb-4">
-              Biotechnologist turned LinkedIn Ghostwriter
+              Marco Libanore — Biotechnologist &amp; LinkedIn Ghostwriter
             </p>
             <p className="text-lg text-gray-600 leading-relaxed">
-              I'm a biotechnology professional with a deep passion for science communication.
-              After years in the lab and the biotech industry, I discovered that the biggest challenge
-              for brilliant scientists and executives isn't doing the work — it's telling the world about it.
+              I am Marco Libanore, a biotechnologist from Italy based in the Netherlands. I hold an MSc in Biotechnology from Wageningen University &amp; Research (WUR) and a BSc from the University of Milano-Bicocca, with hands-on research experience spanning genetic engineering, industrial bioprocess design, synthetic biology, novel food technologies and EU regulatory frameworks.
             </p>
           </div>
         </div>
@@ -57,20 +55,16 @@ export default function WhoAmI() {
           <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">My Story</h2>
           <div className="prose prose-lg max-w-none text-gray-700 space-y-6">
             <p>
-              With an MSc in Biotechnology specializing in genetic engineering and metabolic engineering,
-              I've spent years understanding the complexities of the biotech and pharma world. I know what
-              it takes to develop groundbreaking research, navigate regulatory landscapes, and bring
-              innovations to market.
+              My scientific career has taken me from the Italian National Research Council (CNR-IBBA) to Wageningen, from a nationally recognised MSc Thesis project — awarded 8/10 — that expanded a genetic engineering toolbox for a publicly-funded NWO research programme, to an internship at dsm-firmenich's Biotech Campus in Delft, where I independently built an in-house genetic toolbox for an industrially relevant bacterium. I have worked across academia, national research institutes and industrial biotech, giving me a genuinely varied perspective on how science, business and regulation intersect.
             </p>
             <p>
-              I realized that many of the most talented people in our industry struggle to share their
-              expertise on platforms like LinkedIn — not because they lack knowledge, but because they
-              lack the time and the right words. That's where BioVoice was born.
+              Beyond the lab, I am an experienced writer. I have been praised for producing some of the strongest application materials recruiters had received — including a cover letter for Cradle described as the best they had seen. I have navigated the EPSO AD5 Graduate Administrators competition and the EPO Young Professional Programme, both of which required translating complex scientific and policy arguments into compelling, structured written documents under strict evaluation criteria. I understand how to make science legible, relevant and persuasive to audiences who are not scientists.
             </p>
             <p>
-              My mission is to bridge the gap between scientific expertise and compelling content.
-              I help biotech and pharma leaders build an authentic LinkedIn presence that reflects
-              their knowledge, passion, and vision — without taking hours away from their actual work.
+              This combination — deep technical credibility in life sciences and biotech, paired with genuine writing ability and an understanding of the EU innovation and regulatory landscape — is what I bring to LinkedIn ghostwriting. I help scientists, founders, researchers and biotech professionals communicate their work, their expertise and their vision in a way that actually lands with the people they are trying to reach.
+            </p>
+            <p>
+              If you work in life sciences, biotech, foodtech, regulatory affairs, precision fermentation, synthetic biology or EU innovation policy — I speak your language, and I can help you find yours.
             </p>
           </div>
         </div>
@@ -87,7 +81,7 @@ export default function WhoAmI() {
               </div>
               <h3 className="text-lg font-semibold mb-2">Scientific Background</h3>
               <p className="text-gray-600 text-sm">
-                MSc in Biotechnology with expertise in genetic engineering and metabolic engineering.
+                MSc from Wageningen University &amp; Research with expertise in genetic engineering, synthetic biology, industrial bioprocess design and novel food technologies.
               </p>
             </div>
             <div className="bg-white p-6 rounded-lg shadow-md text-center">
@@ -96,7 +90,7 @@ export default function WhoAmI() {
               </div>
               <h3 className="text-lg font-semibold mb-2">Industry Knowledge</h3>
               <p className="text-gray-600 text-sm">
-                Deep understanding of biotech, pharma, and life sciences from hands-on experience.
+                Experience across academia, national research institutes (CNR-IBBA) and industrial biotech (dsm-firmenich), with a varied perspective on science, business and regulation.
               </p>
             </div>
             <div className="bg-white p-6 rounded-lg shadow-md text-center">
@@ -105,7 +99,7 @@ export default function WhoAmI() {
               </div>
               <h3 className="text-lg font-semibold mb-2">Content Expertise</h3>
               <p className="text-gray-600 text-sm">
-                Turning complex science into engaging stories that resonate on LinkedIn.
+                Proven writing ability recognised across competitive EU selection processes (EPSO, EPO) and by industry recruiters — making science legible, relevant and persuasive.
               </p>
             </div>
           </div>
@@ -132,7 +126,7 @@ export default function WhoAmI() {
       <footer className="bg-gray-900 text-white py-8">
         <div className="max-w-6xl mx-auto px-4 text-center">
           <p className="mb-2">&copy; 2026 BioVoice - LinkedIn Ghostwriting for Biotech Leaders</p>
-          <p className="text-gray-400 text-sm">MSc Biotechnology | Genetic Engineering Specialist | Based in the Netherlands</p>
+          <p className="text-gray-400 text-sm">MSc Biotechnology — Wageningen University &amp; Research | Based in the Netherlands</p>
         </div>
       </footer>
     </div>
