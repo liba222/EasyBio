@@ -38,11 +38,14 @@ export default function LinkedInPostGenerator({ user, onLogout }) {
     setLoading(true);
 
     try {
+      const token = await user.jwt();
       const response = await fetch('/api/generate-posts', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
         },
+
         body: JSON.stringify({ clientInfo, postBrief }),
       });
 
