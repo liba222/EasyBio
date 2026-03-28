@@ -2,7 +2,7 @@ import Anthropic from '@anthropic-ai/sdk';
 
 const anthropic = new Anthropic();
 
-export default async (req) => {
+export default async (req, context) => {
   if (req.method !== 'POST') {
     return new Response(JSON.stringify({ error: 'Method not allowed' }), {
       status: 405,
@@ -10,6 +10,14 @@ export default async (req) => {
     });
   }
 
+const netlifyUser = context.clientContext?.user;
+  if (!netlifyUser) {
+    return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+      status: 401,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+  
   const { clientInfo, postBrief } = await req.json();
 
   if (!clientInfo || !postBrief) {
