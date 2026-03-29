@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Routes, Route, Link, Navigate } from 'react-router-dom';
 import { Calendar, CheckCircle, TrendingUp, Linkedin } from 'lucide-react';
 import { getUser, logout, handleAuthCallback, updateUser } from '@netlify/identity';
+import { PayPalScriptProvider, PayPalButtons } from '@paypal/react-paypal-js';
 import WhoAmI from './WhoAmI.jsx';
 import LinkedInPostGenerator from './LinkedInPostGenerator.jsx';
 import LoginPage from './LoginPage.jsx';
@@ -134,6 +135,51 @@ export default function App() {
   );
 }
 
+function PayPalCheckoutButton({ tier }) {
+  const [paypalError, setPaypalError] = useState('');
+
+  return (
+    <div className="mt-3">
+      <div className="flex items-center gap-2 my-3">
+        <div className="flex-1 border-t border-gray-200" />
+        <span className="text-xs text-gray-400 font-medium">or pay with</span>
+        <div className="flex-1 border-t border-gray-200" />
+      </div>
+      {paypalError && (
+        <p className="text-red-500 text-xs text-center mb-2">{paypalError}</p>
+      )}
+      <PayPalButtons
+        style={{ layout: 'vertical', color: 'gold', shape: 'rect', label: 'pay', height: 40 }}
+        createOrder={async () => {
+          setPaypalError('');
+          const res = await fetch('/api/create-paypal-order', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ tier }),
+          });
+          const data = await res.json();
+          if (!data.orderId) throw new Error(data.error || 'Failed to create order');
+          return data.orderId;
+        }}
+        onApprove={async (data) => {
+          const res = await fetch('/api/capture-paypal-order', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ orderId: data.orderID, tier }),
+          });
+          const result = await res.json();
+          if (result.success) {
+            window.location.href = `/post-generator?tier=${tier}&payment=paypal`;
+          } else {
+            setPaypalError(result.error || 'Payment could not be completed.');
+          }
+        }}
+        onError={() => setPaypalError('Something went wrong with PayPal. Please try again.')}
+      />
+    </div>
+  );
+}
+
 function GhostwritingLanding({ user, onLogout }) {
   const [checkoutLoading, setCheckoutLoading] = useState(null);
 
@@ -159,6 +205,7 @@ function GhostwritingLanding({ user, onLogout }) {
   };
 
   return (
+    <PayPalScriptProvider options={{ 'client-id': import.meta.env.VITE_PAYPAL_CLIENT_ID || 'sb', currency: 'EUR' }}>
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
       {/* Header */}
       <nav className="bg-white shadow-sm">
@@ -309,6 +356,7 @@ function GhostwritingLanding({ user, onLogout }) {
               <button onClick={() => handleCheckout('essential')} disabled={checkoutLoading === 'essential'} className="w-full text-center bg-gray-100 text-gray-900 px-6 py-3 rounded-lg font-semibold hover:bg-gray-200 transition disabled:opacity-50">
                 {checkoutLoading === 'essential' ? 'Redirecting...' : 'Get Started'}
               </button>
+              <PayPalCheckoutButton tier="essential" />
             </div>
 
             <div className="border-2 border-blue-500 rounded-lg p-8 relative shadow-lg">
@@ -342,6 +390,7 @@ function GhostwritingLanding({ user, onLogout }) {
               <button onClick={() => handleCheckout('professional')} disabled={checkoutLoading === 'professional'} className="w-full text-center bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition disabled:opacity-50">
                 {checkoutLoading === 'professional' ? 'Redirecting...' : 'Get Started'}
               </button>
+              <PayPalCheckoutButton tier="professional" />
             </div>
 
             <div className="border-2 border-gray-200 rounded-lg p-8 hover:border-blue-500 transition">
@@ -376,6 +425,7 @@ function GhostwritingLanding({ user, onLogout }) {
               <button onClick={() => handleCheckout('executive')} disabled={checkoutLoading === 'executive'} className="w-full text-center bg-gray-100 text-gray-900 px-6 py-3 rounded-lg font-semibold hover:bg-gray-200 transition disabled:opacity-50">
                 {checkoutLoading === 'executive' ? 'Redirecting...' : 'Get Started'}
               </button>
+              <PayPalCheckoutButton tier="executive" />
             </div>
           </div>
         </div>
@@ -426,5 +476,6 @@ function GhostwritingLanding({ user, onLogout }) {
         </div>
       </footer>
     </div>
+    </PayPalScriptProvider>
   );
 }
