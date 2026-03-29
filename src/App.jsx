@@ -216,9 +216,11 @@ function GhostwritingLanding({ user, onLogout }) {
               <Link to="/who-am-i" className="text-blue-600 hover:text-blue-700 font-medium transition">
                 Who Am I
               </Link>
-              <Link to="/post-generator" className="text-blue-600 hover:text-blue-700 font-medium transition">
-                AI Post Generator
-              </Link>
+              {user && (
+                <Link to="/post-generator" className="text-blue-600 hover:text-blue-700 font-medium transition">
+                  AI Post Generator
+                </Link>
+              )}
               {user && (
                 <button onClick={onLogout} className="text-gray-500 hover:text-gray-700 text-sm font-medium transition">
                   Sign Out
@@ -331,7 +333,7 @@ function GhostwritingLanding({ user, onLogout }) {
       <section id="packages" className="py-16 bg-white">
         <div className="max-w-6xl mx-auto px-4">
           <h3 className="text-3xl font-bold text-center mb-12">Choose Your Package</h3>
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             <div className="border-2 border-gray-200 rounded-lg p-8 hover:border-blue-500 transition">
               <h4 className="text-2xl font-bold mb-2">Essential</h4>
               <div className="text-4xl font-bold text-blue-600 mb-4">€650<span className="text-lg text-gray-600">/month</span></div>
@@ -427,6 +429,32 @@ function GhostwritingLanding({ user, onLogout }) {
               </button>
               <PayPalCheckoutButton tier="executive" />
             </div>
+
+            <div className="border-2 border-purple-200 rounded-lg p-8 hover:border-purple-500 transition">
+              <h4 className="text-2xl font-bold mb-2">Custom</h4>
+              <div className="text-4xl font-bold text-purple-600 mb-4">Let's talk</div>
+              <ul className="space-y-3 mb-8">
+                <li className="flex items-start">
+                  <CheckCircle className="text-green-500 mr-2 mt-1 flex-shrink-0" size={20} />
+                  <span>Tailored posting frequency</span>
+                </li>
+                <li className="flex items-start">
+                  <CheckCircle className="text-green-500 mr-2 mt-1 flex-shrink-0" size={20} />
+                  <span>Custom content mix</span>
+                </li>
+                <li className="flex items-start">
+                  <CheckCircle className="text-green-500 mr-2 mt-1 flex-shrink-0" size={20} />
+                  <span>Flexible engagement model</span>
+                </li>
+                <li className="flex items-start">
+                  <CheckCircle className="text-green-500 mr-2 mt-1 flex-shrink-0" size={20} />
+                  <span>Pricing to match your needs</span>
+                </li>
+              </ul>
+              <button onClick={() => document.getElementById('contact').scrollIntoView({behavior: 'smooth'})} className="w-full text-center bg-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-purple-700 transition">
+                Contact Me
+              </button>
+            </div>
           </div>
         </div>
       </section>
@@ -465,6 +493,47 @@ function GhostwritingLanding({ user, onLogout }) {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Contact Section */}
+      <section id="contact" className="py-16 bg-white">
+        <div className="max-w-2xl mx-auto px-4">
+          <h3 className="text-3xl font-bold text-center mb-4">Let's Build Something Custom</h3>
+          <p className="text-gray-600 text-center mb-10">Tell me about your goals and I'll get back to you within 24 hours.</p>
+          <form name="contact" method="POST" data-netlify="true" className="space-y-5">
+            <input type="hidden" name="form-name" value="contact" />
+            <div>
+              <input
+                type="text"
+                name="name"
+                required
+                placeholder="Your name"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+              />
+            </div>
+            <div>
+              <input
+                type="email"
+                name="email"
+                required
+                placeholder="Your email"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+              />
+            </div>
+            <div>
+              <textarea
+                name="message"
+                required
+                rows={5}
+                placeholder="Tell me about your needs, goals, and what you're looking for..."
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
+              />
+            </div>
+            <button type="submit" className="w-full bg-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-purple-700 transition">
+              Send Message
+            </button>
+          </form>
         </div>
       </section>
 
