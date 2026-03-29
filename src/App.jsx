@@ -209,9 +209,10 @@ function GhostwritingLanding({ user, onLogout }) {
       </nav>
 
       {/* Hero Section */}
-      <section className="max-w-6xl mx-auto px-4 py-20" style={{ backgroundImage: 'url(/backgroundWebsite.png)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
-        <div className="text-center">
-          <h2 className="text-5xl font-bold text-gray-900 mb-6">
+      <section className="relative px-4 py-20" style={{ backgroundImage: 'url(/backgroundWebsite.png)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
+        <div className="absolute inset-0 bg-white/75" />
+        <div className="relative max-w-6xl mx-auto text-center">
+          <h2 className="text-5xl font-bold text-gray-900 mb-6 drop-shadow-sm">
             LinkedIn Content That Combines<br />
             <span className="text-blue-600">Scientific Credibility</span> with{' '}
             <span className="text-blue-600">Engagement</span>
@@ -231,6 +232,7 @@ function GhostwritingLanding({ user, onLogout }) {
       </section>
 
       {/* Why Section */}
+
       <section className="bg-white py-16">
         <div className="max-w-6xl mx-auto px-4">
           <h3 className="text-3xl font-bold text-center mb-12">Why Biotech Leaders Choose BioVoice</h3>
