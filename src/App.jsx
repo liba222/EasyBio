@@ -169,7 +169,8 @@ function PayPalCheckoutButton({ tier }) {
           });
           const result = await res.json();
           if (result.success) {
-            window.location.href = `/post-generator?tier=${tier}&payment=paypal`;
+            const emailParam = result.payerEmail ? `&paypal_email=${encodeURIComponent(result.payerEmail)}` : '';
+            window.location.href = `/post-generator?tier=${tier}&payment=paypal${emailParam}`;
           } else {
             setPaypalError(result.error || 'Payment could not be completed.');
           }

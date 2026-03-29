@@ -41,7 +41,8 @@ export default async (req) => {
     const data = await response.json();
 
     if (data.status === 'COMPLETED') {
-      return new Response(JSON.stringify({ success: true, tier }), {
+      const payerEmail = data.payer?.email_address || '';
+      return new Response(JSON.stringify({ success: true, tier, payerEmail }), {
         status: 200,
         headers: { 'Content-Type': 'application/json' },
       });

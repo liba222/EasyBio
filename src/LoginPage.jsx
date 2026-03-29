@@ -7,6 +7,8 @@ export default function LoginPage({ onLoginSuccess }) {
   const [searchParams] = useSearchParams();
   const sessionId = searchParams.get('session_id');
   const tier = searchParams.get('tier');
+  const paypalPayment = searchParams.get('payment') === 'paypal';
+  const paypalEmail = searchParams.get('paypal_email');
 
   const [mode, setMode] = useState('login'); // 'login', 'signup', 'recovery'
   const [email, setEmail] = useState('');
@@ -18,6 +20,14 @@ export default function LoginPage({ onLoginSuccess }) {
   const [message, setMessage] = useState('');
   const [paymentVerified, setPaymentVerified] = useState(false);
   const [verifyingPayment, setVerifyingPayment] = useState(false);
+
+  // Unlock signup immediately for PayPal payments
+  useEffect(() => {
+    if (!paypalPayment) return;
+    setPaymentVerified(true);
+    setMode('signup');
+    if (paypalEmail) setEmail(decodeURIComponent(paypalEmail));
+  }, [paypalPayment, paypalEmail]);
 
   // Verify payment session if session_id is present
   useEffect(() => {
