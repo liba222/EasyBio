@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { login, signup, requestPasswordRecovery, AuthError } from '@netlify/identity';
-import { Loader2, Lock, Mail, Eye, EyeOff, CreditCard } from 'lucide-react';
+import { Loader2, Lock, Mail, Eye, EyeOff } from 'lucide-react';
 
 export default function LoginPage({ onLoginSuccess }) {
   const [searchParams] = useSearchParams();
-  const sessionId = searchParams.get('session_id');
   const tier = searchParams.get('tier');
   const paypalPayment = searchParams.get('payment') === 'paypal';
   const paypalEmail = searchParams.get('paypal_email');
@@ -19,47 +18,14 @@ export default function LoginPage({ onLoginSuccess }) {
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
   const [paymentVerified, setPaymentVerified] = useState(false);
-  const [verifyingPayment, setVerifyingPayment] = useState(false);
 
-  // Unlock signup immediately for PayPal payments
+  // Unlock signup for PayPal payments
   useEffect(() => {
     if (!paypalPayment) return;
     setPaymentVerified(true);
     setMode('signup');
     if (paypalEmail) setEmail(decodeURIComponent(paypalEmail));
   }, [paypalPayment, paypalEmail]);
-
-  // Verify payment session if session_id is present
-  useEffect(() => {
-    if (!sessionId) return;
-
-    async function verifyPayment() {
-      setVerifyingPayment(true);
-      try {
-        const response = await fetch('/api/verify-payment', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ sessionId }),
-        });
-        const data = await response.json();
-        if (data.verified) {
-          setPaymentVerified(true);
-          setMode('signup');
-          if (data.customerEmail) {
-            setEmail(data.customerEmail);
-          }
-        } else {
-          setError('Payment could not be verified. Please try again or contact support.');
-        }
-      } catch {
-        setError('Failed to verify payment. Please try again.');
-      } finally {
-        setVerifyingPayment(false);
-      }
-    }
-
-    verifyPayment();
-  }, [sessionId]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -130,17 +96,6 @@ export default function LoginPage({ onLoginSuccess }) {
     }
   };
 
-  if (verifyingPayment) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
-        <div className="text-center">
-          <Loader2 className="animate-spin text-blue-600 mx-auto mb-4" size={40} />
-          <p className="text-gray-600 text-lg">Verifying your payment...</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Header */}
@@ -159,11 +114,7 @@ export default function LoginPage({ onLoginSuccess }) {
         <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md">
           <div className="text-center mb-6">
             <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              {mode === 'signup' && paymentVerified ? (
-                <CreditCard className="text-blue-600" size={28} />
-              ) : (
                 <Lock className="text-blue-600" size={28} />
-              )}
             </div>
             <h2 className="text-2xl font-bold text-gray-900">
               {mode === 'login' && 'Sign In'}

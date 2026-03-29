@@ -140,11 +140,6 @@ function PayPalCheckoutButton({ tier }) {
 
   return (
     <div className="mt-3">
-      <div className="flex items-center gap-2 my-3">
-        <div className="flex-1 border-t border-gray-200" />
-        <span className="text-xs text-gray-400 font-medium">or pay with</span>
-        <div className="flex-1 border-t border-gray-200" />
-      </div>
       {paypalError && (
         <p className="text-red-500 text-xs text-center mb-2">{paypalError}</p>
       )}
@@ -182,28 +177,6 @@ function PayPalCheckoutButton({ tier }) {
 }
 
 function GhostwritingLanding({ user, onLogout }) {
-  const [checkoutLoading, setCheckoutLoading] = useState(null);
-
-  const handleCheckout = async (tier) => {
-    setCheckoutLoading(tier);
-    try {
-      const response = await fetch('/api/create-checkout-session', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tier }),
-      });
-      const data = await response.json();
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        alert(data.error || 'Failed to start checkout. Please try again.');
-      }
-    } catch (error) {
-      alert('Something went wrong. Please try again.');
-    } finally {
-      setCheckoutLoading(null);
-    }
-  };
 
   return (
     <PayPalScriptProvider options={{ 'client-id': import.meta.env.VITE_PAYPAL_CLIENT_ID || 'sb', currency: 'EUR' }}>
@@ -356,9 +329,6 @@ function GhostwritingLanding({ user, onLogout }) {
                   <span>Approval before posting</span>
                 </li>
               </ul>
-              <button onClick={() => handleCheckout('essential')} disabled={checkoutLoading === 'essential'} className="w-full text-center bg-gray-100 text-gray-900 px-6 py-3 rounded-lg font-semibold hover:bg-gray-200 transition disabled:opacity-50">
-                {checkoutLoading === 'essential' ? 'Redirecting...' : 'Get Started'}
-              </button>
               <PayPalCheckoutButton tier="essential" />
             </div>
 
@@ -390,9 +360,6 @@ function GhostwritingLanding({ user, onLogout }) {
                   <span>Monthly analytics report</span>
                 </li>
               </ul>
-              <button onClick={() => handleCheckout('professional')} disabled={checkoutLoading === 'professional'} className="w-full text-center bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition disabled:opacity-50">
-                {checkoutLoading === 'professional' ? 'Redirecting...' : 'Get Started'}
-              </button>
               <PayPalCheckoutButton tier="professional" />
             </div>
 
@@ -425,9 +392,6 @@ function GhostwritingLanding({ user, onLogout }) {
                   <span>Priority support</span>
                 </li>
               </ul>
-              <button onClick={() => handleCheckout('executive')} disabled={checkoutLoading === 'executive'} className="w-full text-center bg-gray-100 text-gray-900 px-6 py-3 rounded-lg font-semibold hover:bg-gray-200 transition disabled:opacity-50">
-                {checkoutLoading === 'executive' ? 'Redirecting...' : 'Get Started'}
-              </button>
               <PayPalCheckoutButton tier="executive" />
             </div>
 
