@@ -102,7 +102,7 @@ export default function LoginPage({ onLoginSuccess }) {
       <nav className="bg-white shadow-sm">
         <div className="max-w-6xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <Link to="/" className="text-2xl font-bold text-blue-900">BioVoice</Link>
+            <Link to="/"><img src="/logoBiovoice.png" alt="BioVoice" className="h-10 w-auto" /></Link>
             <Link to="/" className="text-blue-600 hover:text-blue-700 font-medium transition">
               Back to Home
             </Link>

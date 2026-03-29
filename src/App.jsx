@@ -185,7 +185,7 @@ function GhostwritingLanding({ user, onLogout }) {
       <nav className="bg-white shadow-sm">
         <div className="max-w-6xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold text-blue-900">BioVoice</h1>
+            <img src="/logoBiovoice.png" alt="BioVoice" className="h-10 w-auto" />
             <div className="flex items-center gap-4">
               <Link to="/who-am-i" className="text-blue-600 hover:text-blue-700 font-medium transition">
                 Who Am I
@@ -209,7 +209,7 @@ function GhostwritingLanding({ user, onLogout }) {
       </nav>
 
       {/* Hero Section */}
-      <section className="max-w-6xl mx-auto px-4 py-20">
+      <section className="max-w-6xl mx-auto px-4 py-20" style={{ backgroundImage: 'url(/backgroundWebsite.png)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
         <div className="text-center">
           <h2 className="text-5xl font-bold text-gray-900 mb-6">
             LinkedIn Content That Combines<br />
@@ -505,6 +505,7 @@ function GhostwritingLanding({ user, onLogout }) {
       {/* Footer */}
       <footer className="bg-gray-900 text-white py-8">
         <div className="max-w-6xl mx-auto px-4 text-center">
+          <div className="flex justify-center mb-3"><img src="/logoBiovoice.png" alt="BioVoice" className="h-8 w-auto opacity-80 brightness-0 invert" /></div>
           <p className="mb-2">© 2026 BioVoice - LinkedIn Ghostwriting for Biotech Leaders</p>
           <p className="text-gray-400 text-sm">MSc Biotechnology | Genetic Engineering Specialist | Based in the Netherlands</p>
         </div>
