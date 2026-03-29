@@ -1,14 +1,14 @@
 const PRICE_MAP = {
   essential: {
-    amount: '650.00',
+    amount: '350.00',
     description: 'BioVoice Essential - 3 LinkedIn posts/week, monthly strategy call',
   },
   professional: {
-    amount: '1100.00',
+    amount: '600.00',
     description: 'BioVoice Professional - 5 LinkedIn posts/week, bi-weekly calls, analytics',
   },
   executive: {
-    amount: '1650.00',
+    amount: '900.00',
     description: 'BioVoice Executive - 5 posts/week + articles, weekly calls, full strategy',
   },
 };

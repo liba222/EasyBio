@@ -310,7 +310,7 @@ function GhostwritingLanding({ user, onLogout }) {
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             <div className="border-2 border-gray-200 rounded-lg p-8 hover:border-blue-500 transition">
               <h4 className="text-2xl font-bold mb-2">Essential</h4>
-              <div className="text-4xl font-bold text-blue-600 mb-4">€650<span className="text-lg text-gray-600">/month</span></div>
+              <div className="text-4xl font-bold text-blue-600 mb-4">€350<span className="text-lg text-gray-600">/month</span></div>
               <ul className="space-y-3 mb-8">
                 <li className="flex items-start">
                   <CheckCircle className="text-green-500 mr-2 mt-1 flex-shrink-0" size={20} />
@@ -337,7 +337,7 @@ function GhostwritingLanding({ user, onLogout }) {
                 Most Popular
               </div>
               <h4 className="text-2xl font-bold mb-2">Professional</h4>
-              <div className="text-4xl font-bold text-blue-600 mb-4">€1,100<span className="text-lg text-gray-600">/month</span></div>
+              <div className="text-4xl font-bold text-blue-600 mb-4">€600<span className="text-lg text-gray-600">/month</span></div>
               <ul className="space-y-3 mb-8">
                 <li className="flex items-start">
                   <CheckCircle className="text-green-500 mr-2 mt-1 flex-shrink-0" size={20} />
@@ -365,7 +365,7 @@ function GhostwritingLanding({ user, onLogout }) {
 
             <div className="border-2 border-gray-200 rounded-lg p-8 hover:border-blue-500 transition">
               <h4 className="text-2xl font-bold mb-2">Executive</h4>
-              <div className="text-4xl font-bold text-blue-600 mb-4">€1,650<span className="text-lg text-gray-600">/month</span></div>
+              <div className="text-4xl font-bold text-blue-600 mb-4">€900<span className="text-lg text-gray-600">/month</span></div>
               <ul className="space-y-3 mb-8">
                 <li className="flex items-start">
                   <CheckCircle className="text-green-500 mr-2 mt-1 flex-shrink-0" size={20} />
