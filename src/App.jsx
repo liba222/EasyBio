@@ -224,9 +224,6 @@ function GhostwritingLanding({ user, onLogout }) {
             <button onClick={() => document.getElementById('packages').scrollIntoView({behavior: 'smooth'})} className="bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-700 transition">
               View Packages
             </button>
-            <button onClick={() => document.getElementById('packages').scrollIntoView({behavior: 'smooth'})} className="border-2 border-blue-600 text-blue-600 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-50 transition">
-              View Packages
-            </button>
           </div>
         </div>
       </section>
